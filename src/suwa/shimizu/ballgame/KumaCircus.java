@@ -26,7 +26,7 @@ public class KumaCircus extends GLGame{
 
 	@Override
 	public Screen getStartScreen() {
-		return new GameScreen(this);
+		return new MainMenuScreen(this);
 	}
 	
 	

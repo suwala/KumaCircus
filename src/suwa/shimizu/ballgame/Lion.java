@@ -8,13 +8,13 @@ public class Lion extends DynamicGameObject{
 	public Lion(float x, float y, float width, float height) {
 		super(x, y, width, height);
 		neutralX = x;
-		velocity.x = 2f;
+		velocity.set(Math.random() > 0.5f? -2f:2f,0);
 	}
 	
 	public Lion(float x,float y){
 		super(x,y,WIDTH,HEIGHT);
 		neutralX = x;
-		velocity.x = 2f;
+		velocity.set(Math.random() > 0.5f? -2f:2f,0);
 	}
 
 	public void update(float deltaTime){

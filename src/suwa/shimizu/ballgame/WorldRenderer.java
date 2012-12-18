@@ -11,6 +11,7 @@ import com.badlogic.androidgames.framework.impl.GLGraphics;
 public class WorldRenderer {
 	static final float FRUSTUM_WIDTH = 15;
 	static final float FRUSTUM_HEIGHT = 25;
+	static int kumaAA=1;
 	GLGraphics glGraphics;
 	World world;
 	Camera2D camera;
@@ -26,15 +27,15 @@ public class WorldRenderer {
 	
 	public void render(){
 		camera.position.set(world.ball.position);
-		if(camera.position.x < FRUSTUM_WIDTH*0.25f)
-			camera.position.x = FRUSTUM_WIDTH*0.25f;
-		if(camera.position.x > FRUSTUM_WIDTH*0.75f)
-			camera.position.x = FRUSTUM_WIDTH*0.75f;
+		if(camera.position.x < FRUSTUM_WIDTH*0.1f)
+			camera.position.x = FRUSTUM_WIDTH*0.1f;
+		if(camera.position.x > FRUSTUM_WIDTH*0.9f)
+			camera.position.x = FRUSTUM_WIDTH*0.9f;
 		
-		if(camera.position.y < FRUSTUM_HEIGHT*0.25f)
-			camera.position.y = FRUSTUM_HEIGHT*0.25f;
-		if(camera.position.y > FRUSTUM_HEIGHT*0.75f)
-			camera.position.y = FRUSTUM_HEIGHT*0.75f;
+		if(camera.position.y < FRUSTUM_HEIGHT*0.1f)
+			camera.position.y = FRUSTUM_HEIGHT*0.1f;
+		if(camera.position.y > FRUSTUM_HEIGHT*0.9f)
+			camera.position.y = FRUSTUM_HEIGHT*0.9f;
 		
 		camera.setViewportAndMatrices();
 		renderBackground();
@@ -57,7 +58,7 @@ public class WorldRenderer {
 	}
 	private void renderBackground(){
 		batcher.beginBatch(Assets.tile);
-		batcher.drawSprite(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2, FRUSTUM_WIDTH, FRUSTUM_HEIGHT, Assets.tileRegion);
+		batcher.drawSprite(FRUSTUM_WIDTH/2, FRUSTUM_HEIGHT/2, FRUSTUM_WIDTH*1.28f, FRUSTUM_HEIGHT*1.24f, Assets.tileRegion);
 		batcher.endBatch();
 	}
 	private void renderWalls(){
@@ -79,11 +80,11 @@ public class WorldRenderer {
 		switch(world.ball.state){
 		case Ball.NORMAL:
 			if(Math.abs(world.ball.velocity.x) > Math.abs(world.ball.velocity.y)){
-				keyFrame = Assets.ball[0].getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
+				keyFrame = Assets.ball[0].getKeyFrame(world.ball.time*world.ball.velocity.len()/20f, Animation.ANIMATION_LOOPING);
 				side = world.ball.velocity.x<0?-1:1;
 				front = world.ball.velocity.y<0?-1:1;
 			}else{
-				keyFrame = Assets.ball[1].getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
+				keyFrame = Assets.ball[1].getKeyFrame(world.ball.time*world.ball.velocity.len()/40f, Animation.ANIMATION_LOOPING);
 				side = world.ball.velocity.x<0?-1:1;
 				front = world.ball.velocity.y<0?-1:1;
 			}
@@ -103,22 +104,25 @@ public class WorldRenderer {
 	}
 	private void renderKuma(){
 		TextureRegion keyFrame;
+		float height=0;
 		switch(world.ball.state){
 		case Ball.NORMAL:
-		default:
-
-			keyFrame = Assets.kuma.getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
-
+			if(kumaAA == -1){
+				keyFrame = Assets.kumaAA.getKeyFrame(world.ball.time*world.ball.velocity.len()/20f, Animation.ANIMATION_LOOPING);
+				height =0.5f;
+			}else
+				keyFrame = Assets.kuma.getKeyFrame(world.ball.time*world.ball.velocity.len()/20f, Animation.ANIMATION_LOOPING);
 			break;
 		case Ball.HIT:
 			keyFrame = Assets.kumaHit.getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
 			break;
 		case Ball.HOLE_IN:
+		default:
 			keyFrame = Assets.kumaHoleIN.getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
 			break;
 		}
 		float side = world.ball.velocity.x<0?-1:1;
-		batcher.drawSprite(world.ball.position.x, world.ball.position.y+0.5f, side*1, 2, keyFrame);
+		batcher.drawSprite(world.ball.position.x, world.ball.position.y+0.5f+height, side, 2, keyFrame);
 	}
 	private void renderLion(){
 		TextureRegion keyFrame;
@@ -126,7 +130,7 @@ public class WorldRenderer {
 		for(int i=0;i<len;i++){
 			Lion lion = world.lions.get(i);
 			keyFrame = Assets.lion.getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
-			batcher.drawSprite(lion.position.x, lion.position.y, lion.velocity.x < 0?-1.5f:1.5f, 1, keyFrame);
+			batcher.drawSprite(lion.position.x, lion.position.y, lion.velocity.x < 0?-1.5f:1.5f, 0.8f, keyFrame);
 		}
 		
 	}

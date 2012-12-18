@@ -91,7 +91,7 @@ public class BallGameScreen extends Screen{
 		
 		for(int i=0;i<NUM_WALLS;i++){
 			Wall wall;
-			wall = new Wall(r, WORLD_HEIGHT/2, 2, 4);
+			wall = new Wall(1, WORLD_HEIGHT/2, 2, 4);
 			
 			grid.insertStaticObject(wall);
 			walls.add(wall);

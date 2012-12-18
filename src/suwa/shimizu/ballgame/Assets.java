@@ -10,19 +10,17 @@ import com.badlogic.androidgames.framework.impl.GLGame;
 public class Assets {
 	public static Texture tile;
 	public static TextureRegion tileRegion;
-	public static Texture help;
-	public static TextureRegion helpRegion;
 	public static Texture items;
 	public static Animation[] ball;
 	public static Animation kuma;
 	public static Animation kumaHit;
 	public static Animation lion;
 	public static Animation kumaHoleIN;
+	public static Animation kumaAA;
 	public static TextureRegion hole;
 	public static TextureRegion wall;
 	public static TextureRegion wallSide;
-	public static Texture title;
-	public static TextureRegion titleRegion;
+	public static TextureRegion hiScoreRegion;
 	
 	public static Music music;
 	public static Sound hit;
@@ -33,9 +31,6 @@ public class Assets {
 	public static void load(GLGame game){
 		tile = new Texture(game,"dir/texture/tile2.png");
 		tileRegion = new TextureRegion(tile, 0, 0, 320, 480);
-		
-		help = new Texture(game,"dir/texture/help.png");
-		helpRegion = new TextureRegion(help,0,0,256,384);
 		
 		items = new Texture(game,"dir/texture/items.png");
 		ball = new Animation[3];
@@ -67,6 +62,11 @@ public class Assets {
 				new TextureRegion(items,256, 32, 32, 64));
 		kumaHoleIN = new Animation(0.2f,new TextureRegion(items, 288, 32, 32, 64),
 				new TextureRegion(items,320, 32, 32, 64));
+		//0,224
+		kumaAA = new Animation(0.1f,new TextureRegion(items,0,224,64,80),
+				new TextureRegion(items,64,224,64,80),
+				new TextureRegion(items,128,224,64,80),
+				new TextureRegion(items,192,224,64,80));
 		
 		lion = new Animation(0.2f, new TextureRegion(items, 256, 0, 32, 32),
 				new TextureRegion(items, 256, 0, 32, 32),
@@ -76,8 +76,7 @@ public class Assets {
 		wall = new TextureRegion(items, 192, 0, 32, 64);
 		wallSide = new TextureRegion(items, 128, 32, 64, 32);
 		
-		title = new Texture(game,"dir/texture/title.png");
-		titleRegion = new TextureRegion(title, 0, 0, 320, 480);
+		hiScoreRegion = new TextureRegion(items, 0, 304, 272, 80);
 		
 		music = game.getAudio().newMusic("dir/sound/bgm.mp3");
 		music.setLooping(true);
@@ -85,8 +84,7 @@ public class Assets {
 		music.play();
 		
 		boyon = game.getAudio().newSound("dir/sound/boyon.wav");
-		holeIN = game.getAudio().newSound("dir/sound/hakusyu.mp3");
-		
+		holeIN = game.getAudio().newSound("dir/sound/hakusyu.mp3");		
 		
 	}
 	
