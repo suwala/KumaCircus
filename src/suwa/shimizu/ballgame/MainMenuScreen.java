@@ -25,6 +25,7 @@ public class MainMenuScreen extends GLScreen{
 	Rectangle scoreBounds;
 	Rectangle helpBounds;
 	Rectangle kumaAABounds;
+	Rectangle soundBounds;
 	Vector2 touchPoint;
 	float time;
 	
@@ -37,6 +38,7 @@ public class MainMenuScreen extends GLScreen{
 		scoreBounds = new Rectangle(64,90,160,48);
 		helpBounds = new Rectangle(64, 16, 160, 48);
 		kumaAABounds = new Rectangle(32, 38, 32, 64);
+		soundBounds = new Rectangle(276-64/2, 48-64/2, 64, 64);
 		touchPoint = new Vector2();
 		
 	}
@@ -59,6 +61,13 @@ public class MainMenuScreen extends GLScreen{
 					game.setScreen(new HelpScreen(game));
 				if(OverlapTester.pointInRectangle(kumaAABounds, touchPoint))
 					WorldRenderer.kumaAA = -WorldRenderer.kumaAA;
+				if(OverlapTester.pointInRectangle(soundBounds, touchPoint)){
+					Settings.soundEnabled  = !Settings.soundEnabled;
+					if(Settings.soundEnabled)
+						Assets.music.play();
+					else
+						Assets.music.pause();
+				}
 			}
 		}
 		time += deltaTime;
@@ -91,6 +100,10 @@ public class MainMenuScreen extends GLScreen{
 			keyFrame = Assets.kuma.getKeyFrame(time, Animation.ANIMATION_LOOPING);
 			batcher.drawSprite(32, 38, 32, 64, keyFrame);
 		}
+		
+		batcher.drawSprite(320-44, 48, 64, 64, 
+				Settings.soundEnabled?Assets.soundON:Assets.soundOFF);
+		
 		batcher.endBatch();
 		
 		gl.glDisable(GL10.GL_BLEND);

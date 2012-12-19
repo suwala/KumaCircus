@@ -79,12 +79,13 @@ public class WorldRenderer {
 		float front;
 		switch(world.ball.state){
 		case Ball.NORMAL:
+			float keyTime = (world.ball.velocity.len())*0.05f;
 			if(Math.abs(world.ball.velocity.x) > Math.abs(world.ball.velocity.y)){
-				keyFrame = Assets.ball[0].getKeyFrame(world.ball.time*world.ball.velocity.len()/20f, Animation.ANIMATION_LOOPING);
+				keyFrame = Assets.ball[0].getKeyFrame(world.ball.time*keyTime, Animation.ANIMATION_LOOPING);
 				side = world.ball.velocity.x<0?-1:1;
 				front = world.ball.velocity.y<0?-1:1;
 			}else{
-				keyFrame = Assets.ball[1].getKeyFrame(world.ball.time*world.ball.velocity.len()/40f, Animation.ANIMATION_LOOPING);
+				keyFrame = Assets.ball[1].getKeyFrame(world.ball.time*keyTime, Animation.ANIMATION_LOOPING);
 				side = world.ball.velocity.x<0?-1:1;
 				front = world.ball.velocity.y<0?-1:1;
 			}
@@ -97,8 +98,7 @@ public class WorldRenderer {
 		case Ball.HOLE_IN:
 		default:
 			keyFrame = Assets.ball[2].getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
-			side=1;front=1;
-				
+			side=1;front=1;				
 		}
 		batcher.drawSprite(world.ball.position.x, world.ball.position.y, side*1, front*1, keyFrame);
 	}
@@ -132,7 +132,6 @@ public class WorldRenderer {
 			keyFrame = Assets.lion.getKeyFrame(world.ball.time, Animation.ANIMATION_LOOPING);
 			batcher.drawSprite(lion.position.x, lion.position.y, lion.velocity.x < 0?-1.5f:1.5f, 0.8f, keyFrame);
 		}
-		
 	}
 	private void renderHole(){
 		batcher.drawSprite(world.hole.position.x, world.hole.position.y, 2, 2, Assets.hole);

@@ -36,9 +36,13 @@ public class GameScreen extends GLScreen{
 	TextureRegion pausedRegion;
 	Texture gameOver;
 	TextureRegion gameOverRegion;
+	Texture clear;
+	TextureRegion clearRegion;
 	Vector2 touchPoint;
 	Rectangle retryBounds;
 	Rectangle titleBounds;
+	String strScore;
+	int oldScore;
 	
 	public GameScreen(Game game) {
 		super(game);
@@ -48,6 +52,7 @@ public class GameScreen extends GLScreen{
 		camera.zoom = 1;
 		batcher = new SpriteBatcher(glGraphics, 200);
 		touchPoint = new Vector2();
+		oldScore=-1;
 		//96,128retry 96,208title	
 		retryBounds = new Rectangle(96, 298, 128, 64);
 		titleBounds = new Rectangle(96, 208, 128,64);
@@ -55,21 +60,24 @@ public class GameScreen extends GLScreen{
 			
 			@Override
 			public void wall() {//ここにSE
-				Assets.boyon.play(1);
+				if(Settings.soundEnabled)
+					Assets.boyon.play(1);
 			}
 			
 			@Override
 			public void lion() {
+				if(Settings.soundEnabled);
 			}
 			
 			@Override
 			public void holeIN() {
-				
-				Assets.holeIN.play(1);
+				if(Settings.soundEnabled)
+					Assets.holeIN.play(1);
 			}
 			
 			@Override
 			public void hit() {
+				if(Settings.soundEnabled);
 			}
 		};
 		
@@ -115,8 +123,14 @@ public class GameScreen extends GLScreen{
 		world.update(deltaTime, game.getInput().getAccelX(), game.getInput().getAccelY());
 		//if(world.state == World.WORLD_NEXT)
 		//	state = GAME_READY;
-		if(world.state == World.WORLD_GAMEOVER)
+		if(world.state == World.WORLD_GAMEOVER){
 			state = GAME_OVER;
+			if(world.score >= Settings.highscores[4]){
+				Settings.addScore(world.score,world.level);
+				Settings.save(game.getFileIO());
+			}
+			
+		}
 	}
 	private void updatePaused(){
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
@@ -179,31 +193,54 @@ public class GameScreen extends GLScreen{
 		
 	}
 	private void presentRunning(){
+		//残りライフの描画
 		if(world.life>0){
 			batcher.beginBatch(Assets.items);
 			for(int i=0;i<world.life;i++){
 				TextureRegion keyFrame = Assets.ball[0].getKeyFrame(0, Animation.ANIMATION_NONLOOPING);
 				batcher.drawSprite((i*20)+320*0.1f, 480*0.9f, 32, 32, keyFrame);
 			}
-
+			scoreRendrer();
 			batcher.endBatch();
 		}
 	}
 	private void presentGameOver(){
-		batcher.beginBatch(gameOver);
-		batcher.drawSprite(160, 240, 320, 480, gameOverRegion);
+		
+		if(world.life > 0){
+			batcher.beginBatch(clear);
+			batcher.drawSprite(160, 240, 320, 480, clearRegion);
+		}else{
+			batcher.beginBatch(gameOver);
+			batcher.drawSprite(160, 240, 320, 480, gameOverRegion);
+		}
 		batcher.endBatch();
 	}
 	private void presentPaused(){
-		batcher.beginBatch(paused);
-		batcher.drawSprite((int)(320/2), (int)(480/2), 256, 384, pausedRegion);	
-		batcher.endBatch();
+		if(world.life>0){
+			batcher.beginBatch(Assets.items);
+			for(int i=0;i<world.life;i++){
+				TextureRegion keyFrame = Assets.ball[0].getKeyFrame(0, Animation.ANIMATION_NONLOOPING);
+				batcher.drawSprite((i*20)+320*0.1f, 480*0.9f, 32, 32, keyFrame);
+			}
+			scoreRendrer();
+			batcher.drawSprite(160, 240,48*6,48, Assets.paused);
+			batcher.endBatch();
+		}
+	}
+	private void scoreRendrer(){
+		if(oldScore != world.score){
+			strScore = String.format("%1$05d", world.score);
+			oldScore = world.score;
+		}
+		Assets.font.drawText(batcher, strScore, 320*0.75f, 480*0.95f);
+		batcher.drawSprite(320*0.55f, 480*0.95f, 32, 16, Assets.lv);
+		Assets.font.drawText(batcher, ""+world.level, 320*0.65f, 480*0.95f);
 	}
 
 	@Override
 	public void pause() {
 		paused.dispose();
-		paused.dispose();
+		gameOver.dispose();
 	}
 
 	@Override
@@ -212,6 +249,8 @@ public class GameScreen extends GLScreen{
 		pausedRegion = new TextureRegion(paused, 0, 0,256 , 384);
 		gameOver = new Texture(glGame,"dir/texture/gameover.png");
 		gameOverRegion = new TextureRegion(gameOver,0,0,320,480);
+		clear = new Texture(glGame,"dir/texture/clear.png");
+		clearRegion = new TextureRegion(clear, 0, 0, 320, 480);
 	}
 
 	@Override

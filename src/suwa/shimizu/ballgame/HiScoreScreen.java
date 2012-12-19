@@ -29,6 +29,8 @@ public class HiScoreScreen extends GLScreen{
 	Circle returnBtn;
 	Vector2 touchPoint;
 	Vector2 move = new Vector2(1.5f, 0);
+	String[] strHiScore;
+	String[] strLevels;
 	
 	float time;
 	
@@ -43,6 +45,13 @@ public class HiScoreScreen extends GLScreen{
 		returnBtn = new Circle(240, 16, 80);
 		touchPoint = new Vector2();
 		objs = new ArrayList<DynamicGameObject>(NUM_OBJ*5);
+		strHiScore = new String[5];
+		strLevels = new String[5];
+		for(int i=0;i<5;i++){
+			strHiScore[i] = (i+1)+":"+String.format("%d", Settings.highscores[i]);
+			strLevels[i] = ""+Settings.levels[i];
+		}
+		
 		int i=0;
 		while(i<NUM_OBJ*3){
 			switch (i/NUM_OBJ) {
@@ -63,18 +72,6 @@ public class HiScoreScreen extends GLScreen{
 			}
 			i++;
 		}
-//		while(i++<NUM_OBJ){
-//			
-//		}
-//		while(i++<NUM_OBJ*2){
-//			Ball ball = new Ball(i%NUM_OBJ*352/NUM_OBJ, 48);
-//			objs.add(ball);			
-//		}
-//		while(i++<NUM_OBJ*3){
-//			Lion lion = new Lion(i%NUM_OBJ*352/NUM_OBJ, 416);
-//			objs.add(lion);
-//		}
-		
 	}
 
 	@Override
@@ -128,6 +125,8 @@ public class HiScoreScreen extends GLScreen{
 		
 		//クマとボールの描画
 		renderObject(deltaTime);
+		//スコアの描画
+		renderScores();
 		//HiScore看板の描画
 		batcher.drawSprite(160, 442, 272, 80, Assets.hiScoreRegion);
 		batcher.endBatch();
@@ -158,7 +157,14 @@ public class HiScoreScreen extends GLScreen{
 				batcher.drawSprite(obj.position.x, obj.position.y, obj.velocity.x < 0?-32:32, 32, keyFrame);
 		}
 	}
-
+	private void renderScores(){
+		float y=288; 
+		for(int i=0;i<5;i++){
+			Assets.font.drawText(batcher, strHiScore[i] , 64, y);
+			Assets.font.drawText(batcher, strLevels[i], 211, y);
+			y-=44;
+		}
+	}
 	@Override
 	public void pause() {
 		scoreBoad.dispose();

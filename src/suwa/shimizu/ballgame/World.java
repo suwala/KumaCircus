@@ -58,7 +58,7 @@ public class World {
 		this.wallSides = new ArrayList<WallSide>(NUM_WALLSIDES);
 		this.lions = new ArrayList<Lion>(NUM_LION);
 		this.worldListener = worldListener;		
-		this.level = 1;
+		this.level = 10;
 		
 		generateLevel();
 				
@@ -71,15 +71,23 @@ public class World {
 		
 		time=0;
 		
-		hole.position.set(rand.nextFloat()*WORLD_WIDTH*0.8f,WORLD_HEIGHT*0.85f);
+		if(rand.nextFloat() > 0.5f)
+			hole.position.set(rand.nextFloat()*WORLD_WIDTH*0.8f,WORLD_HEIGHT*0.85f);
+		else
+			hole.position.set(WORLD_WIDTH*0.85f,rand.nextFloat()*WORLD_HEIGHT*0.85f);
 		hole.circle.center.set(hole.position.x,hole.position.y);
 		hole.minCircle.center.set(hole.position.x,hole.position.y);
 		
 		int num = NUM_LION - (NUM_LION-level);
 		
+		//以前の配置の消去
 		lions.clear();
 		walls.clear();
 		wallSides.clear();
+		
+		//Lv5の時にライフボーナス
+		if(level == 5)
+			life++;
 		
 		//縦壁の生成
 		int i=0;
@@ -142,7 +150,6 @@ public class World {
 			}else
 				return true;
 		}
-
 		return false;
 	}
 	
@@ -191,6 +198,8 @@ public class World {
 		if(ball.state == Ball.HOLE_IN){
 			if(ball.time / 0.2f  > 8){
 				level++;
+				if(level > 10)
+					state = WORLD_GAMEOVER;
 				generateLevel();
 				reStart(deltaTime);
 			}
@@ -252,8 +261,7 @@ public class World {
 		for(int i=0;i<len;i++){
 			Wall wall = walls.get(i);
 			if(OverlapTester.overlapCircleRectangle(ball.circle, wall.bounds)){
-				if(OverlapTester.overlapCircleRectangle(ball.circle, wall.bounds))
-					worldListener.wall();
+				worldListener.wall();
 				
 				ball.position.sub(ball.velocity.x*deltaTime,ball.velocity.y*deltaTime);
 				ball.velocity.mul(-0.7f);

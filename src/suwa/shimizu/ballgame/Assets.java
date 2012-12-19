@@ -3,6 +3,7 @@ package suwa.shimizu.ballgame;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Sound;
 import com.badlogic.androidgames.framework.gl.Animation;
+import com.badlogic.androidgames.framework.gl.Font;
 import com.badlogic.androidgames.framework.gl.Texture;
 import com.badlogic.androidgames.framework.gl.TextureRegion;
 import com.badlogic.androidgames.framework.impl.GLGame;
@@ -21,6 +22,12 @@ public class Assets {
 	public static TextureRegion wall;
 	public static TextureRegion wallSide;
 	public static TextureRegion hiScoreRegion;
+	public static TextureRegion soundON;
+	public static TextureRegion soundOFF;
+	public static TextureRegion paused;
+	public static TextureRegion lv;
+	
+	public static Font font;
 	
 	public static Music music;
 	public static Sound hit;
@@ -77,11 +84,19 @@ public class Assets {
 		wallSide = new TextureRegion(items, 128, 32, 64, 32);
 		
 		hiScoreRegion = new TextureRegion(items, 0, 304, 272, 80);
+		soundON = new TextureRegion(items, 0, 144, 32, 32);
+		soundOFF = new TextureRegion(items, 32, 144, 32, 32);
+		paused = new TextureRegion(items, 64, 144, 48*6, 48);
+		lv = new TextureRegion(items, 320, 192, 64, 32);
+		
+		font = new Font(items, 0, 192, 10, 32, 32);
+		
 		
 		music = game.getAudio().newMusic("dir/sound/bgm.mp3");
 		music.setLooping(true);
 		music.setVolume(0.5f);
-		music.play();
+		if(Settings.soundEnabled)
+			music.play();
 		
 		boyon = game.getAudio().newSound("dir/sound/boyon.wav");
 		holeIN = game.getAudio().newSound("dir/sound/hakusyu.mp3");		
